@@ -1,0 +1,8 @@
+<!-- Placeholder for PWA icon - Replace with actual Barberng logo -->
+<svg width="192" height="192" viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="192" height="192" fill="#2563eb"/>
+  <circle cx="96" cy="60" r="20" fill="white"/>
+  <path d="M60 100 L132 100 L132 140 C132 150 124 160 112 160 L80 160 C68 160 60 150 60 140 Z" fill="white"/>
+  <rect x="85" y="80" width="22" height="30" fill="white"/>
+  <text x="96" y="180" text-anchor="middle" fill="white" font-family="Arial" font-size="16" font-weight="bold">Barberng</text>
+</svg>
