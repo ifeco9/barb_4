@@ -52,7 +52,7 @@ export default function SignInPage() {
   }
 
   const handleSocialSignIn = async (provider: 'google' | 'apple') => {
-    toast.info(`${provider} sign in coming soon!`)
+    toast(`${provider} sign in coming soon!`)
   }
 
   return (

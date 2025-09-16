@@ -10,7 +10,7 @@ import {
   ShoppingBagIcon,
   ChartBarIcon,
   CurrencyDollarIcon,
-  PackageIcon,
+  ArchiveBoxIcon,
   TruckIcon,
   StarIcon,
   PlusIcon,
@@ -71,7 +71,7 @@ export function SellerDashboard() {
       title: 'Manage Products',
       description: 'View and edit your inventory',
       href: '/seller/products',
-      icon: PackageIcon,
+      icon: ArchiveBoxIcon,
       color: 'bg-secondary-500 hover:bg-secondary-600'
     },
     {

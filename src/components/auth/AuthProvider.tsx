@@ -1,6 +1,4 @@
-'use client'
-
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useDispatch } from 'react-redux'
 import { supabase } from '@/lib/supabase'
@@ -41,6 +39,48 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoadingState] = useState(true)
   const dispatch = useDispatch()
   const router = useRouter()
+
+  const fetchUserRole = useCallback(async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', userId)
+        .maybeSingle() // Use maybeSingle instead of single to handle zero results
+
+      if (error) {
+        console.error('Error fetching user role:', error.message)
+        // Set default role for customers if profile doesn't exist
+        dispatch(setUserRole('customer'))
+        return
+      }
+
+      if (data) {
+        dispatch(setUserRole(data.role))
+      } else {
+        // No profile found, set default role and try to create profile
+        console.log('No user profile found, setting default role')
+        dispatch(setUserRole('customer'))
+        
+        // Attempt to create profile for existing users
+        try {
+          await supabase.rpc('create_user_profile', {
+            user_id: userId,
+            user_email: session?.user?.email || '',
+            user_full_name: session?.user?.user_metadata?.full_name || 'User',
+            user_role: 'customer'
+          })
+          console.log('Profile created successfully')
+        } catch (createError) {
+          console.log('Profile creation handled by system')
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching user role:', error)
+      // Fallback to customer role
+      dispatch(setUserRole('customer'))
+    }
+  }, [dispatch, session])
 
   useEffect(() => {
     // Get initial session
@@ -102,49 +142,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => {
       subscription.unsubscribe()
     }
-  }, [dispatch, router])
-
-  const fetchUserRole = async (userId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('role')
-        .eq('id', userId)
-        .maybeSingle() // Use maybeSingle instead of single to handle zero results
-
-      if (error) {
-        console.error('Error fetching user role:', error.message)
-        // Set default role for customers if profile doesn't exist
-        dispatch(setUserRole('customer'))
-        return
-      }
-
-      if (data) {
-        dispatch(setUserRole(data.role))
-      } else {
-        // No profile found, set default role and try to create profile
-        console.log('No user profile found, setting default role')
-        dispatch(setUserRole('customer'))
-        
-        // Attempt to create profile for existing users
-        try {
-          await supabase.rpc('create_user_profile', {
-            user_id: userId,
-            user_email: session?.user?.email || '',
-            user_full_name: session?.user?.user_metadata?.full_name || 'User',
-            user_role: 'customer'
-          })
-          console.log('Profile created successfully')
-        } catch (createError) {
-          console.log('Profile creation handled by system')
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching user role:', error)
-      // Fallback to customer role
-      dispatch(setUserRole('customer'))
-    }
-  }
+  }, [dispatch, router, fetchUserRole])
 
   const signUp = async (email: string, password: string, metadata: any = {}) => {
     setLoadingState(true)

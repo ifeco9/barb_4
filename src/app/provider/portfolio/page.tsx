@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { RootState } from '@/store'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
+import { ProviderLayout } from '@/components/layout/ProviderLayout'
 import { 
   PlusIcon,
   PhotoIcon,
@@ -95,6 +96,7 @@ export default function ProviderPortfolioPage() {
   }
 
   return (
+    <ProviderLayout>
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
